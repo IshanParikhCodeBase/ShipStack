@@ -9,9 +9,9 @@ import googlemaps
 # ]
 
 points = [
-    (1, 2), (2, 3), (3, 4),  # These are close together
-    (10, 11), (11, 12),       # These form another group
-    (50, 51)                  # This one may be isolated as noise
+    (1, 2), (2, 3), (3, 4), 
+    (10, 11), (11, 12),       
+    (50, 51)                  
 ]
 
 coordinates = np.array(points)
@@ -29,3 +29,5 @@ for label, point in zip(labels, coordinates):
         clusters[label] = []
     clusters[label].append(point)
 print("Clustered Shipping Locations:", clusters)
+
+# the clusters formed here, will then be displayed on the frontend.
