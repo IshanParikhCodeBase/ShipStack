@@ -7,3 +7,7 @@ Distance between every pair of order is calculated, and if the distance is < thr
 those orders are grouped together in a stack.
 
 The idea is to automate shipment grouping process for a faster and cost-effective deliveries.
+
+Why was DBSCAN utilized, other possible option was to calculate distance between every pair of shipping
+locations, however, that would yield a O(n2) time complexity, which we ideally want to avoid.
+TBC.
