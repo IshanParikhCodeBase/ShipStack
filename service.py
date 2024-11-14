@@ -31,7 +31,6 @@ for label, point in zip(labels, coordinates):
 print("Clustered Shipping Locations:", clusters)
 
 
-# Replace 'YOUR_API_KEY' with your actual API key
 gmaps = googlemaps.Client(key='YOUR_API_KEY')
 
 def geocode_address(address):
@@ -52,12 +51,12 @@ def calculate_distances(origin, destinations):
         distances[destinations[i]] = distance_value
     return distances
 
-# Example usage:
+# Testing Geocode
 address = "1600 Amphitheatre Parkway, Mountain View, CA 94043, USA"
 lat, lng = geocode_address(address)
 print(lat, lng)
 
-# Example usage:
+# Testing Distance Matrix
 origin = "1600 Amphitheatre Parkway, Mountain View, CA 94043, USA"
 destinations = ["New York, NY", "Los Angeles, CA", "Chicago, IL"]
 
