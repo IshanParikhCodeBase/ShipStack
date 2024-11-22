@@ -24,14 +24,13 @@ db = DBSCAN(eps=epsilon, min_samples=min_sample, metric='haversine').fit(np.radi
 clusters = {}
 labels = db.labels_
 
-for label, point in zip(labels, coordinates):
-    if label not in clusters:
-        clusters[label] = []
-    clusters[label].append(point)
-print("Clustered Shipping Locations:", clusters)
+# for label, point in zip(labels, coordinates):
+#     if label not in clusters:
+#         clusters[label] = []
+#     clusters[label].append(point)
+# print("Clustered Shipping Locations:", clusters)
 
 
-gmaps = googlemaps.Client(key='YOUR_API_KEY')
 
 def geocode_address(address):
     geocode_result = gmaps.geocode(address)
@@ -42,24 +41,29 @@ def geocode_address(address):
         return None
 
 def calculate_distances(origin, destinations):
-
+    # API results
     results = gmaps.distance_matrix(origin, destinations, mode='driving')
+    
+    # Foramtting results
     distances = {}
-    for i, row in enumerate(results['rows']):
-        distance_text = row['elements'][0]['distance']['text']
-        distance_value = int(distance_text.split()[0]) * 1000  # Convert to meters
-        distances[destinations[i]] = distance_value
-    return distances
+    info = results['rows'][0]['elements']
+    n = len(info)
+    
+    for i in range(n):
+        distances[destinations[i]] = [info[i]['distance']['value'],info[i]['duration']['text']]
 
-# Testing Geocode
-address = "1600 Amphitheatre Parkway, Mountain View, CA 94043, USA"
-lat, lng = geocode_address(address)
-print(lat, lng)
+    return distances
 
 # Testing Distance Matrix
 origin = "1600 Amphitheatre Parkway, Mountain View, CA 94043, USA"
 destinations = ["New York, NY", "Los Angeles, CA", "Chicago, IL"]
 
 distances = calculate_distances(origin, destinations)
-for destination, distance in distances.items():
-    print(f"Distance to {destination}: {distance} meters")
+
+print(distances)
+
+
+# Accessing distances
+# key = ['location'] => this will give array of 2 elements
+# 0th index = distance
+# 1th index = duration
