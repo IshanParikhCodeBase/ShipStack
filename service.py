@@ -2,35 +2,6 @@ from sklearn.cluster import DBSCAN
 import numpy as np
 import googlemaps
 
-
-# shipping_geocodes = [
-#     (40.712776, -74.005974),  # Example: New York City
-#     (34.052235, -118.243683), # Example: Los Angeles
-# ]
-
-points = [
-    (1, 2), (2, 3), (3, 4), 
-    (10, 11), (11, 12),       
-    (50, 51)                  
-]
-
-coordinates = np.array(points)
-
-epsilon = 0.1
-min_sample = 2
-
-db = DBSCAN(eps=epsilon, min_samples=min_sample, metric='haversine').fit(np.radians(coordinates))
-
-clusters = {}
-labels = db.labels_
-
-# for label, point in zip(labels, coordinates):
-#     if label not in clusters:
-#         clusters[label] = []
-#     clusters[label].append(point)
-# print("Clustered Shipping Locations:", clusters)
-
-
 gmaps = googlemaps.Client(key='AIzaSyD-nXo9Iixx2j_AXl6B-89FLImAEpe5K0Y')
 
 def geocode_address(address):
@@ -40,31 +11,56 @@ def geocode_address(address):
         return lat, lng
     else:
         return None
+    
+origin = "1600 Amphitheatre Parkway, Mountain View, CA 94043, USA"
+destinations = ["New York, NY", "Los Angeles, CA", "Chicago, IL", "Houston, TX", "Miami, FL"]
 
 def calculate_distances(origin, destinations):
     # API results
     results = gmaps.distance_matrix(origin, destinations, mode='driving')
     
     # Foramtting results
-    distances = {}
-    info = results['rows'][0]['elements']
-    n = len(info)
-    
-    for i in range(n):
-        distances[destinations[i]] = [info[i]['distance']['value'],info[i]['duration']['text']]
+    distances_wrt_origin = []
+    for i, dest in enumerate(destinations):
+        info = results["rows"][0]["elements"][i]
+        distances_wrt_origin.append({
+            'destination': dest,
+            'distance_meters': info['distance']['value'],
+            'duration_text': info['duration']['text']
+        })
+    return distances_wrt_origin
 
-    return distances
+distances_wrt_origin = calculate_distances(origin, destinations)
 
-# Testing Distance Matrix
-origin = "1600 Amphitheatre Parkway, Mountain View, CA 94043, USA"
-destinations = ["New York, NY", "Los Angeles, CA", "Chicago, IL"]
+# print(f"Distance of each destination w.r.t origin is as follows: {distances_wrt_origin}")
 
-distances = calculate_distances(origin, destinations)
+# getting distance values from our list
+distances = np.array([[d['distance_meters']] for d in distances_wrt_origin])
 
-print(distances)
+epsilon = 1e6  # 1,000,000 meters (1000 km radius)
+min_samples = 2  # Minimum points to form a cluster
 
+db = DBSCAN(eps=epsilon, min_samples=min_samples, metric='euclidean').fit(distances)
+clusters = {}
+labels = db.labels_
 
-# Accessing distances
-# key = ['location'] => this will give array of 2 elements
-# 0th index = distance
-# 1th index = duration
+distance_to_dest_map = {d['distance_meters']: d['destination'] for d in distances_wrt_origin}
+
+for label, distance in zip(labels, distances):
+    if label not in clusters:
+        clusters[label] = []
+    # Use the distance to find the corresponding destination name (destinaiton is the key)
+    distance_value = distance[0]
+    destination_name = distance_to_dest_map.get(distance_value)
+    clusters[label].append(destination_name)
+
+print("Clustered Destinations:")
+for cluster_id, destinations in clusters.items():
+    if cluster_id == -1:
+        print(f"Cluster {cluster_id} (outlliers):")
+        for destination in destinations:
+            print(f"  {destination}")
+    else:
+        print(f"Cluster {cluster_id}:")
+        for destination in destinations:
+            print(f"  {destination}")
