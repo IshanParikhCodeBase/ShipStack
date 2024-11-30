@@ -31,12 +31,13 @@ def calculate_distances(origin, destinations):
     return distances_wrt_origin
 
 distances_wrt_origin = calculate_distances(origin, destinations)
+print('dist wrt store loc',distances_wrt_origin)
 
 # print(f"Distance of each destination w.r.t origin is as follows: {distances_wrt_origin}")
 
 # getting distance values from our list
 distances = np.array([[d['distance_meters']] for d in distances_wrt_origin])
-
+print('distances',distances)
 epsilon = 1e6  # 1,000,000 meters (1000 km radius)
 min_samples = 2  # Minimum points to form a cluster
 
@@ -57,10 +58,12 @@ for label, distance in zip(labels, distances):
 print("Clustered Destinations:")
 for cluster_id, destinations in clusters.items():
     if cluster_id == -1:
-        print(f"Cluster {cluster_id} (outlliers):")
+        print(f"Cluster {cluster_id} (outliers):")
         for destination in destinations:
             print(f"  {destination}")
     else:
         print(f"Cluster {cluster_id}:")
         for destination in destinations:
             print(f"  {destination}")
+
+
