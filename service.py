@@ -1,7 +1,13 @@
 from sklearn.cluster import DBSCAN
 import numpy as np
 import googlemaps
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+key = os.getenv('SECRET_KEY')
+gmaps = googlemaps.Client(key=key)
 
 def geocode_address(address):
     geocode_result = gmaps.geocode(address)
@@ -54,6 +60,7 @@ for label, distance in zip(labels, distances):
     destination_name = distance_to_dest_map.get(distance_value)
     clusters[label].append(destination_name)
 
+# Pretty Print clusters
 print("Clustered Destinations:")
 for cluster_id, destinations in clusters.items():
     if cluster_id == -1:
