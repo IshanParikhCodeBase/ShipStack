@@ -2,8 +2,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from service import calculate_distances
+from service import get_clusters
 import uvicorn
+import json
 
 app = FastAPI()
 
@@ -13,6 +14,7 @@ origins = [
     "http://127.0.0.1:8000",
     "http://127.0.0.1:3000",
     "http://localhost",
+    "http://localhost:5173"
 ]
 
 app.add_middleware(
@@ -23,18 +25,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 # Models --------------------------------------
-class Destinations(BaseModel):
-    addresses:list
-
-class Origin(BaseModel):
-    location:str
-
-class ClusterRequest():
-    desintations:Destinations
-    origin_point:Origin
+class ClusterRequest(BaseModel):
+    desintations:str
+    origin_point:str
 
 # Endpoints -----------------------------------
-@app.post("/uploadAddresses")
-def upload_addresses(cluster_req:ClusterRequest):
-    # calculate_distances(cluster_req.origin_point,cluster_req.desintations)
-    return {cluster_req}
+@app.get("/")
+def root():
+    pass
+
+@app.post("/uploadAddr")
+def upload_addresses(cluster_req:dict):
+    dests= cluster_req["destinations"].split("|")
+    clusters = get_clusters(cluster_req["origin"],dests)
+    
+    json_clusters= json.dumps(clusters)
+    print(json_clusters) 
+    return json_clusters
