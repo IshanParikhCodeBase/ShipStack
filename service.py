@@ -9,21 +9,13 @@ load_dotenv()
 key = os.getenv('SECRET_KEY')
 gmaps = googlemaps.Client(key=key)
 
-# def geocode_address(address):
-#     geocode_result = gmaps.geocode(address)
-#     if geocode_result:
-#         lat, lng = geocode_result[0]['geometry']['location']['lat'], geocode_result[0]['geometry']['location']['lng']
-#         return lat, lng
-#     else:
-#         return None
-    
-# origin = "1600 Amphitheatre Parkway, Mountain View, CA 94043, USA"
-# destinations = ["New York, NY", "Los Angeles, CA", "Chicago, IL", "Houston, TX", "Miami, FL"]
+# Test Data
+# origin = 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA
 # New York, NY|Los Angeles, CA|Chicago, IL|Houston, TX|Miami, FL
+
 def calculate_distances(origin, destinations):
     # API results
     results = gmaps.distance_matrix(origin, destinations, mode='driving')
-    # print(f"RESULTS: {results}")
     # Foramtting results
     distances_wrt_origin = []
     for i, dest in enumerate(destinations):
@@ -34,15 +26,8 @@ def calculate_distances(origin, destinations):
             'duration_text': info['duration']['text']
         })
         
-    # print(f"WRT_ORIGIN: {distances_wrt_origin}")
     return distances_wrt_origin
 
-# distances_wrt_origin = calculate_distances(origin, destinations)
-# print('dist wrt store loc',distances_wrt_origin)
-
-# print(f"Distance of each destination w.r.t origin is as follows: {distances_wrt_origin}")
-
-# getting distance values from our list
 
 def get_clusters(origin, destinations):
     distances_wrt_origin = calculate_distances(origin,destinations)
@@ -65,21 +50,20 @@ def get_clusters(origin, destinations):
         if label not in clusters:
             clusters[int(label)] = []
         # Use the distance to find the corresponding destination name (destinaiton is the key)
-        print(f"MAP: {distance_to_dest_map}")
         destination_name = distance_to_dest_map.get(distance[0])
         clusters[int(label)].append(destination_name)
 
         # Pretty Print clusters
-        print("Clustered Destinations:")
-        for cluster_id, destinations in clusters.items():
-            if cluster_id == -1:
-                print(f"Cluster {cluster_id} (outliers):")
-                for destination in destinations:
-                    print(f"  {destination}")
-            else:
-                print(f"Cluster {cluster_id}:")
-                for destination in destinations:
-                    print(f"  {destination}")
+        # print("Clustered Destinations:")
+        # for cluster_id, destinations in clusters.items():
+        #     if cluster_id == -1:
+        #         print(f"Cluster {cluster_id} (outliers):")
+        #         for destination in destinations:
+        #             print(f"  {destination}")
+        #     else:
+        #         print(f"Cluster {cluster_id}:")
+        #         for destination in destinations:
+        #             print(f"  {destination}")
         
     return clusters
 

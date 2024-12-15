@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import ClusterCreationForm from './components/ClusterCreationForm.vue';
+
 </script>
 
 <template>
-  <HelloWorld />
+  <ClusterCreationForm />
 </template>
 
 <style scoped>
