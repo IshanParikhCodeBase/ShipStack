@@ -14,6 +14,7 @@ origins = [
     "http://127.0.0.1:8000",
     "http://127.0.0.1:3000",
     "http://localhost",
+    "http://localhost:5174",
     "http://localhost:5173"
 ]
 
@@ -29,6 +30,11 @@ class ClusterRequest(BaseModel):
     desintations:str
     origin_point:str
 
+class Cluster(BaseModel):
+    groupName:str
+    locations:list
+
+
 # Endpoints -----------------------------------
 @app.get("/")
 def root():
@@ -36,9 +42,25 @@ def root():
 
 @app.post("/uploadAddr")
 def upload_addresses(cluster_req:dict):
+    
+    print(cluster_req)
     dests= cluster_req["destinations"].split("|")
     clusters = get_clusters(cluster_req["origin"],dests)
+    clusters = format_cluster_array(clusters)
     
-    json_clusters= json.dumps(clusters)
-    print(json_clusters) 
-    return json_clusters
+    # json_clusters= json.dumps(clusters)
+    # print(json_clusters) 
+    return clusters
+
+def format_cluster_array(clusters):
+    
+    result = []
+    for key in clusters.keys():
+        result.append({         
+            'groupName':str(key),
+            'locations':clusters[key]
+        })
+    
+    result = json.dumps(result)
+    print(result)
+    return result
