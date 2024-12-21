@@ -9,6 +9,7 @@ load_dotenv()
 key = os.getenv('SECRET_KEY')
 gmaps = googlemaps.Client(key=key)
 
+
 # Test Data
 # origin = 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA
 # New York, NY|Los Angeles, CA|Chicago, IL|Houston, TX|Miami, FL
@@ -66,5 +67,8 @@ def get_clusters(origin, destinations):
         #             print(f"  {destination}")
         
     return clusters
+
+
+        
 
 
