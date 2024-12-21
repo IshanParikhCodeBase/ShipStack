@@ -2,10 +2,17 @@
 import { ref } from "vue";
 import axios from "axios";
 import ClusterCard from "../components/ClusterCard.vue";
+import * as XLSX from 'xlsx';
+import { group } from "console";
 
-const clusters = ref([]);
+const clusters = ref<Cluster[]>([]);
 const destinations = ref("");
 const origin = ref("");
+
+interface Cluster{
+  groupName:string
+  locations:string[]
+}
 
 const fetchClusters = async () => {
   const jsonData = {
@@ -18,15 +25,39 @@ const fetchClusters = async () => {
   // console.log(jsonData)
 
   try {
+    console.log(jsonData)
     const response = await axios.post(
       "http://127.0.0.1:8000/uploadAddr",
       jsonData
     );
-    clusters.value = JSON.parse(response.data);
+    
+ 
+    clusters.value = JSON.parse(response.data)
+    console.log(clusters)
   } catch (error) {
     console.error("Error fetching posts:", error);
   }
 };
+
+const flatten = (data:[Cluster])=> {
+  const flattened = [] as any;
+  data.forEach(item => {
+    item.locations.forEach(location => {
+      flattened.push({ groupName: "Group "+item.groupName, location: location });
+    });
+  });
+  return flattened;
+}
+
+const downloadAsExcel = ()=> {
+
+      const flattenedData = flatten(clusters.value as [Cluster]);
+
+      const worksheet = XLSX.utils.json_to_sheet(flattenedData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Clusters');
+      XLSX.writeFile(workbook, 'shipping_groups.xlsx'); 
+    }
 </script>
 
 <template>
@@ -44,16 +75,18 @@ const fetchClusters = async () => {
       <p>Destinations: {{ destinations }}</p>
     </div>
     <br />
-    <center><button id="btn-cluster" @click="fetchClusters">Get Clusters</button></center> 
+    <center><button class="btn-cluster" @click="fetchClusters">Get Clusters</button></center> 
   </div>
   <div id="response p-4 w-max">
     <ClusterCard
-      v-for="(c, index) in clusters"
-      :key="c"
-      :locations="c"
-      :clusterNumber="index.toString()"
+      v-for="c in clusters"
+      :key="c.groupName"
+      :locations="c.locations"
+      :clusterNumber="c.groupName"
     />
+    
   </div>
+  <center> <button class="btn-cluster" @click="downloadAsExcel">Download as Excel</button></center> 
 </template>
 
 <style>
@@ -125,7 +158,8 @@ h3 {
   margin-top: calc(var(--size-bezel) * 2.5);
 }
 
-.main-box #btn-cluster {
+.btn-cluster {
+  margin: 1em;
   color: currentColor;
   padding: var(--size-bezel) calc(var(--size-bezel) * 2);
   background: var(--color-light);
@@ -136,7 +170,7 @@ h3 {
 
 }
 
-.main-box #btn-cluster + #btn-cluster {
+.btn-cluster + .btn-cluster {
   margin-left: calc(var(--size-bezel) * 2);
 }
 
