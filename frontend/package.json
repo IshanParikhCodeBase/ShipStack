@@ -11,6 +11,7 @@
   "dependencies": {
     "@types/xlsx": "^0.0.35",
     "axios": "^1.7.9",
+    "primeicons": "^7.0.0",
     "vue": "^3.5.13",
     "xlsx": "^0.18.5"
   },

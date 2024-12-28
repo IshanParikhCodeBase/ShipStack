@@ -27,7 +27,7 @@ app.add_middleware(
 )
 # Models --------------------------------------
 class ClusterRequest(BaseModel):
-    desintations:str
+    desintations:list
     origin_point:str
 
 class Cluster(BaseModel):
@@ -44,7 +44,7 @@ def root():
 def upload_addresses(cluster_req:dict):
     
     print(cluster_req)
-    dests= cluster_req["destinations"].split("|")
+    dests= cluster_req["destinations"]
     clusters = get_clusters(cluster_req["origin"],dests)
     clusters = format_cluster_array(clusters)
     
