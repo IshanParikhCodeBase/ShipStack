@@ -4,6 +4,17 @@
 import {clusterData} from '../components/data_management'
 import 'primeicons/primeicons.css'
 
+  const addDestinations = () => {
+    if (clusterData.newDestination) {
+      clusterData.destinations.push(clusterData.newDestination);
+      clusterData.newDestination = "";
+      
+    }
+  };
+  const deleteDestination = (index: number)=>{
+    clusterData.destinations.splice(index, 1);
+  };
+
 </script>
 <!-- ----------------------------------- HTML BODY -------------------------------------->
 <template>
@@ -14,11 +25,11 @@ import 'primeicons/primeicons.css'
         v-model="clusterData.newDestination"
         type="text"
         placeholder="Enter an address"
-        @keyup.enter="clusterData.addDestinations()"
+        @keyup.enter="addDestinations()"
       />
       <!-- <p>Destinations: {{ destinations }}</p> -->
       <button
-        @click="clusterData.addDestinations()"
+        @click="addDestinations()"
         class="btn-cluster"
         id="btn-add-destinations"
       >
@@ -28,7 +39,7 @@ import 'primeicons/primeicons.css'
         <li v-for="(dest, index) in clusterData.destinations" :key="index">
           {{ dest }}
           <button
-            @click="clusterData.deleteDestination(index)"
+            @click="deleteDestination(index)"
             class="btn-cluster"
             id="btn-delete-destinations"
           >
