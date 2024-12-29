@@ -1,14 +1,54 @@
 <!-- ----------------------------------- SCRIPT -------------------------------------->
 <script setup lang="ts">
-import {clusterData} from '../components/data_management'
-
+import {clusterData,Cluster} from '../components/data_management'
+import axios from "axios";
+import * as XLSX from "xlsx";
 import ClusterCard from "../components/ClusterCard.vue";
 import DestinationsCard from "../components/DestinationsCard.vue";
 
 
-// const clusters = ref<Cluster[]>([]);
-// const origin = ref("");
-// const destinations = ref([] as string[])
+ const fetchClusters = async () => {
+    const jsonData = {
+      destinations: clusterData.destinations,
+      origin: clusterData.origin,
+    };
+
+    try {
+      console.log(jsonData);
+      const response = await axios.post(
+        "http://127.0.0.1:8000/uploadAddr",
+        jsonData
+      );
+
+      clusterData.clusters = JSON.parse(response.data);
+      console.log(clusterData.clusters);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  }; //end of fetch clusters
+
+  const flatten = (data: [Cluster]) => {
+    const flattened = [] as any;
+    data.forEach((item) => {
+      item.locations.forEach((location) => {
+        flattened.push({
+          groupName: "Group " + item.groupName,
+          location: location,
+        });
+      });
+    });
+    return flattened;
+  }; //end of flatten
+
+  const downloadAsExcel = () => {
+    const flattenedData = flatten(clusterData.clusters as [Cluster]);
+
+    const worksheet = XLSX.utils.json_to_sheet(flattenedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Clusters");
+    XLSX.writeFile(workbook, "shipping_groups.xlsx");
+  }; //end of downloadExcel
+
 
 
 </script>
@@ -30,7 +70,7 @@ import DestinationsCard from "../components/DestinationsCard.vue";
     <DestinationsCard  />
     <br />
     <center>
-      <button class="btn-cluster" id="btn-get-clusters" @click="clusterData.fetchClusters()">
+      <button class="btn-cluster" id="btn-get-clusters" @click="fetchClusters()">
         Get Clusters
       </button>
     </center>
@@ -47,7 +87,7 @@ import DestinationsCard from "../components/DestinationsCard.vue";
     <button
       class="btn-cluster"
       id="btn-download-as-excel"
-      @click="clusterData.downloadAsExcel()"
+      @click="downloadAsExcel()"
     >
       Download as Excel
     </button>
