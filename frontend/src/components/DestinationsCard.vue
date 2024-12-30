@@ -30,7 +30,7 @@ import 'primeicons/primeicons.css'
       <!-- <p>Destinations: {{ destinations }}</p> -->
       <button
         @click="addDestinations()"
-        class="btn-cluster"
+        class="btn-dest"
         id="btn-add-destinations"
       >
         <i class="pi pi-plus-circle"></i>
@@ -40,7 +40,7 @@ import 'primeicons/primeicons.css'
           {{ dest }}
           <button
             @click="deleteDestination(index)"
-            class="btn-cluster"
+            class="btn-dest"
             id="btn-delete-destinations"
           >
             <i class="pi pi-trash"></i>
@@ -53,15 +53,19 @@ import 'primeicons/primeicons.css'
 <!-- ----------------------------------- STYLING -------------------------------------->
  <style>
 
+.btn-dest{
+  padding: 5px;
+  margin: 1em;
+  border-width: 2px;
+  border: #212121 solid 2px;
+  border-radius: var(--size-radius);
+}
  #btn-delete-destinations{
   background-color: rgba(215, 11, 11, 0.858);
-  border-width: 2px;
-
  }
  #btn-add-destinations{
   background-color: rgba(21, 231, 21, 0.764);
-  
-  border-width: 2px;
+
 
 }
 

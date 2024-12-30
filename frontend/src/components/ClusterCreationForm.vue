@@ -162,12 +162,63 @@ h3 {
 }
 
 .btn-cluster {
-  margin: 1em;
+  margin-top: 1em;
   color: currentColor;
   padding: var(--size-bezel) calc(var(--size-bezel) * 2);
   background: var(--color-light);
   border: #212121 solid 3px;
   border-radius: var(--size-radius);
+
+  align-items: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  font-family: Inter,sans-serif;
+  font-size: 16px;
+  height: 48px;
+  justify-content: center;
+  line-height: 24px;
+  max-width: 100%;
+  padding: 0 25px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+.btn-cluster:after {
+  background-color: #111;
+  border-radius: 8px;
+  content: "";
+  display: block;
+  height: 48px;
+  left: 0;
+  width: 100%;
+  position: absolute;
+  top: -2px;
+  transform: translate(8px, 8px);
+  transition: transform .2s ease-out;
+  z-index: -1;
+}
+
+.btn-cluster:hover:after {
+  transform: translate(0, 0);
+}
+
+.btn-cluster:active {
+  background-color: #ffdeda;
+  outline: 0;
+}
+
+.btn-cluster:hover {
+  outline: 0;
+}
+
+@media (min-width: 768px) {
+  .btn-cluster {
+    padding: 0 40px;
+  }
 }
 
 .btn-cluster + .btn-cluster {
