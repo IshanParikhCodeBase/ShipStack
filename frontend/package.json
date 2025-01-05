@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@types/xlsx": "^0.0.35",
     "axios": "^1.7.9",
     "primeicons": "^7.0.0",
     "vue": "^3.5.13",
@@ -17,6 +16,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "@types/xlsx": "^0.0.35",
     "@vitejs/plugin-vue": "^5.2.1",
     "autoprefixer": "^10.4.20",
     "esbuild": "^0.24.0",
