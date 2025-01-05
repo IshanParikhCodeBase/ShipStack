@@ -5,6 +5,8 @@ from pydantic import BaseModel
 from service import get_clusters
 import uvicorn
 import json
+import pandas as pd
+from typing import List, Optional
 
 app = FastAPI()
 
@@ -51,6 +53,7 @@ def upload_addresses(cluster_req:dict):
     # json_clusters= json.dumps(clusters)
     # print(json_clusters) 
     return clusters
+
 
 def format_cluster_array(clusters):
     
