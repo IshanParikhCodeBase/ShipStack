@@ -7,7 +7,7 @@ export interface Cluster {
 
  export const clusterData = reactive({
   origin: "",
-  epsilon: 0,
+  epsilon: "",
   destinations: [] as unknown as [string],
   clusters: [] as unknown as [Cluster],
   newDestination:""

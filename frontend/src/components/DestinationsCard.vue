@@ -3,9 +3,9 @@ import {clusterData} from '../components/data_management'
 import 'primeicons/primeicons.css'
 import axios from "axios";
 import { ref } from "vue";
-const targetColumn = ref("");
 import * as XLSX from "xlsx";
 const isFileUploaded = ref(false)
+const targetColumn = ref("");
 
 const fetchClusters = async () => {
     const jsonData = {
@@ -36,11 +36,54 @@ const deleteDestination = (index: number) => {
     clusterData.destinations.splice(index, 1);
 };
 
+// const handleFileUpload = (event: Event) => {
+//   const input = event.target as HTMLInputElement; 
+//   if (input && input.files) {
+//     const file = input.files[0];
+//     console.log(file);
+//     if (file) {
+//       isFileUploaded.value = true;
+//     } else {
+//       console.warn("No file selected");
+//       return;
+//     }
+
+//     if (!file.name.endsWith(".xlsx") && !file.name.endsWith(".csv")) {
+//       alert("Please upload a valid .xlsx or .csv file.");
+//       return;
+//     }
+
+//     // Start reading the file
+//     const reader = new FileReader();
+//     reader.onload = (e) => {
+//       if (e.target?.result) {
+//         const data = new Uint8Array(e.target.result as ArrayBuffer); // Explicitly cast result to ArrayBuffer
+//         const workbook = XLSX.read(data, { type: 'array' });
+
+//         // Extract data from the first sheet
+//         const sheetName = workbook.SheetNames[0];
+//         const worksheet = workbook.Sheets[sheetName];
+//         const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+//         // Process the extracted data
+//         // iterating through jsonData to get all the destionations and append them to an array    
+//         jsonData.forEach((item: any) => clusterData.destinations.push(item.destination))
+        
+//       } else {
+//         console.error("Failed to read file data.");
+//       }
+//     };
+
+//     reader.readAsArrayBuffer(file);
+//   }
+// };
+
 const handleFileUpload = (event: Event) => {
-  const input = event.target as HTMLInputElement; 
+  const input = event.target as HTMLInputElement;
   if (input && input.files) {
     const file = input.files[0];
     console.log(file);
+
     if (file) {
       isFileUploaded.value = true;
     } else {
@@ -48,8 +91,11 @@ const handleFileUpload = (event: Event) => {
       return;
     }
 
-    if (!file.name.endsWith(".xlsx")) {
-      alert("Please upload a valid .xlsx file.");
+    // Validate file extension
+    const validExtensions = [".xlsx", ".csv"];
+    const isValidExtension = validExtensions.some(ext => file.name.endsWith(ext));
+    if (!isValidExtension) {
+      alert("Please upload a valid .xlsx or .csv file.");
       return;
     }
 
@@ -58,25 +104,42 @@ const handleFileUpload = (event: Event) => {
     reader.onload = (e) => {
       if (e.target?.result) {
         const data = new Uint8Array(e.target.result as ArrayBuffer); // Explicitly cast result to ArrayBuffer
-        const workbook = XLSX.read(data, { type: 'array' });
 
-        // Extract data from the first sheet
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+        if (file.name.endsWith(".xlsx")) {
+          // Handle .xlsx files
+          const workbook = XLSX.read(data, { type: "array" });
 
-        // Process the extracted data
-        // iterating through jsonData to get all the destionations and append them to an array    
-        jsonData.forEach((item: any) => clusterData.destinations.push(item.destination))
-        
+          // Extract data from the first sheet
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+          // Process the extracted data
+          console.log('from json data',jsonData)
+          console.log('For name', targetColumn.value)
+          jsonData.forEach((item: any) =>
+            clusterData.destinations.push(item[targetColumn.value])
+          );
+        } else if (file.name.endsWith(".csv")) {
+          // Handle .csv files
+          const textData = new TextDecoder().decode(data); // Convert ArrayBuffer to text
+          const worksheet = XLSX.read(textData, { type: "string" }); // Parse CSV as string
+          const jsonData = XLSX.utils.sheet_to_json(worksheet.Sheets[worksheet.SheetNames[0]]);
+
+          // Process the extracted data
+          jsonData.forEach((item: any) =>
+            clusterData.destinations.push(item.destination)
+          );
+        }
       } else {
         console.error("Failed to read file data.");
       }
     };
 
-    reader.readAsArrayBuffer(file);
+    reader.readAsArrayBuffer(file); // Read both .xlsx and .csv as ArrayBuffer
   }
 };
+
 
 </script>
 
@@ -106,7 +169,7 @@ const handleFileUpload = (event: Event) => {
             <span>OR</span>
         </div>
 
-        <h2>Upload XLSX 📄</h2>
+        <h2>Upload XLSX or CSV 📄</h2>
         <div class="csv-upload">
             <div class="input-group">
                 <input
@@ -119,8 +182,9 @@ const handleFileUpload = (event: Event) => {
                     <i :class="['pi', isFileUploaded ? 'pi-file-check' : 'pi-upload']"></i>
                     <input
                         type="file"
-                        accept=".xlsx"
+                        accept=".xlsx,.csv"
                         class="hidden"
+                        :disabled = "targetColumn.length < 1"
                         @change="handleFileUpload"
                     />
                 </label>
@@ -183,6 +247,7 @@ const handleFileUpload = (event: Event) => {
 .btn-upload {
     color: var(--color-accent);
 }
+
 
 .btn-add:hover, .btn-delete:hover, .btn-upload:hover {
     border-color: currentColor;

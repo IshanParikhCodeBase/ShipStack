@@ -112,3 +112,7 @@
     content: '📍';
     -webkit-text-fill-color: initial;
   }
+
+#fileBtn:disabled {
+  background-color: aqua;
+}

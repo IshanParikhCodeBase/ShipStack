@@ -44,7 +44,7 @@ const downloadAsExcel = () => {
                 
                 <div class="radius-container">
                     <div class="radius-label">
-                        <h2>Cluster radius</h2>
+                        <h2>Cluster radius (kM)</h2>
                         <div class="info-icon" title="Locations father than this distance, become part of two distinct cluster.">
                             ⓘ
                         </div>
