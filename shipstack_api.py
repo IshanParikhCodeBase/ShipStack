@@ -44,10 +44,10 @@ def root():
 
 @app.post("/uploadAddr")
 def upload_addresses(cluster_req:dict):
-    
+    epsilonRadius = float(cluster_req["epsilon"])  # extracted radius
     print(cluster_req)
     dests= cluster_req["destinations"]
-    clusters = get_clusters(cluster_req["origin"],dests)
+    clusters = get_clusters(cluster_req["origin"],dests, epsilonRadius)
     clusters = format_cluster_array(clusters)
     
     # json_clusters= json.dumps(clusters)

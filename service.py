@@ -30,13 +30,13 @@ def calculate_distances(origin, destinations):
     return distances_wrt_origin
 
 
-def get_clusters(origin, destinations):
+def get_clusters(origin, destinations, epsilon):
     distances_wrt_origin = calculate_distances(origin,destinations)
     distances = np.array([[d['distance_meters']] for d in distances_wrt_origin])
     
     print(f"distances: {distances}")
 
-    epsilon = 1e6  # 1,000,000 meters (1000 km radius)
+    epsilon = float(epsilon * 1000)
     min_samples = 2  # Minimum points to form a cluster
 
     db = DBSCAN(eps=epsilon, min_samples=min_samples, metric='euclidean').fit(distances)

@@ -25,8 +25,6 @@ const downloadAsExcel = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Clusters");
     XLSX.writeFile(workbook, "shipping_groups.xlsx");
 };
-
-
 </script>
 
 <template>
@@ -41,6 +39,23 @@ const downloadAsExcel = () => {
                     type="text"
                     placeholder="Enter address"
                 />
+                
+                <hr class="separator" />
+                
+                <div class="radius-container">
+                    <div class="radius-label">
+                        <h2>Cluster radius</h2>
+                        <div class="info-icon" title="Locations father than this distance, become part of two distinct cluster.">
+                            ⓘ
+                        </div>
+                    </div>
+                    <input
+                        class="input-text"
+                        type="text"
+                        placeholder="Enter cluster radius"
+                        v-model="clusterData.epsilon"
+                    />
+                </div>
             </div>
             
             <DestinationsCard />
@@ -80,6 +95,34 @@ const downloadAsExcel = () => {
     gap: 1rem;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     margin: 2rem 0;
+}
+
+.radius-container {
+    margin-top: 1rem;
+}
+
+.radius-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.radius-label h2 {
+    margin: 0;
+}
+
+.info-icon {
+    cursor: help;
+    color: #646cff;
+    font-size: 1.2rem;
+    margin-top: 2px;
+}
+
+.separator {
+    margin: 1.5rem 0;
+    border: none;
+    border-top: 1px solid rgba(131, 132, 137, 0.2);
 }
 
 @media (max-width: 640px) {

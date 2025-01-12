@@ -11,6 +11,7 @@ const fetchClusters = async () => {
     const jsonData = {
         destinations: clusterData.destinations,
         origin: clusterData.origin,
+        epsilon: clusterData.epsilon
     };
 
     try {
